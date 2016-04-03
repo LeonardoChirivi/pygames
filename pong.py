@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # pong.py
 # A simple 1972 PONG rip off in python
 #
@@ -63,8 +64,9 @@ while run:
 
     SURFACE.fill(BLACK)
 
+    #handling quit events
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or ( event.type == KEYUP and event.key == K_ESCAPE ):
             run = False
 
     keys = pygame.key.get_pressed()
