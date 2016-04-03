@@ -78,7 +78,7 @@ while run:
 
     #move left paddle down
     if keys[K_s]:
-        if leftPaddle.bottom < ( HEIGHT - PADDLE_HEIGHT ) :
+        if leftPaddle.bottom < HEIGHT:
             leftPaddle.bottom += PADDLE_SPEED
 
     #move right paddle up
@@ -88,7 +88,7 @@ while run:
 
     #move right paddle down
     if keys[K_DOWN]:
-        if rightPaddle.bottom < ( HEIGHT - PADDLE_HEIGHT ):
+        if rightPaddle.bottom < HEIGHT:
             rightPaddle.bottom += PADDLE_SPEED
 
     #handling ball motion
@@ -96,13 +96,13 @@ while run:
         #BALL_X_VEL = -BALL_X_VEL
         BALL_X = WIDTH/2
         BALL_Y = HEIGHT/2
-        leftScore += 1
+        rightScore += 1
         scored = True
     elif BALL_X == WIDTH:
         #BALL_X_VEL = -BALL_X_VEL
         BALL_X = WIDTH/2
         BALL_Y = HEIGHT/2
-        rightScore += 1
+        leftScore += 1
         scored = True
     if BALL_Y == 0 or BALL_Y == HEIGHT:
         BALL_Y_VEL = -BALL_Y_VEL
