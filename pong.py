@@ -92,19 +92,19 @@ while run:
             rightPaddle.bottom += PADDLE_SPEED
 
     #handling ball motion
-    if BALL_X == 0:
+    if BALL_X <= 0:
         #BALL_X_VEL = -BALL_X_VEL
         BALL_X = WIDTH/2
         BALL_Y = HEIGHT/2
         rightScore += 1
         scored = True
-    elif BALL_X == WIDTH:
+    elif BALL_X >= WIDTH:
         #BALL_X_VEL = -BALL_X_VEL
         BALL_X = WIDTH/2
         BALL_Y = HEIGHT/2
         leftScore += 1
         scored = True
-    if BALL_Y == 0 or BALL_Y == HEIGHT:
+    if BALL_Y <= 0 or BALL_Y >= HEIGHT:
         BALL_Y_VEL = -BALL_Y_VEL
 
     #ball- paddle collision detection
