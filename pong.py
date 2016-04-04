@@ -5,7 +5,7 @@
 # author: Leonardo Chirivì
 # (c) 2016
 
-import pygame, os, sys, time
+import pygame, os, sys
 from pygame.locals import *
 
 #setting window position
@@ -43,7 +43,6 @@ BALL_Y = HEIGHT/2
 BALL_RADIUS = 13
 BALL_X_VEL = 10
 BALL_Y_VEL = 10
-difficoulty = 0
 #############################
 
 #players score
