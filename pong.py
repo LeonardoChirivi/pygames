@@ -2,10 +2,12 @@
 # pong.py
 # A simple 1972 PONG rip off in python
 #
+# Two players game, move the rigth paddle with w,s and the left with up arrow and down arrow.
+#
 # author: Leonardo Chirivì
 # (c) 2016
 
-import pygame, os, sys
+import pygame, os, sys, math
 from pygame.locals import *
 
 #setting window position
@@ -25,11 +27,11 @@ BLACK = (0, 0, 0)
 
 #####paddles specs###########
 PADDLE_WIDTH = 13
-PADDLE_HEIGHT = HEIGHT/5 #130
+PADDLE_HEIGHT = HEIGHT/5
 LEFT_PADDLE_X = 15
-LEFT_PADDLE_Y =  HEIGHT/2.0 - PADDLE_HEIGHT/2.0 #150
-RIGHT_PADDLE_X =  WIDTH - 15 - PADDLE_WIDTH #1250
-RIGHT_PADDLE_Y =  HEIGHT/2.0 - PADDLE_HEIGHT/2.0 #150
+LEFT_PADDLE_Y =  HEIGHT/2.0 - PADDLE_HEIGHT/2.0
+RIGHT_PADDLE_X =  WIDTH - 15 - PADDLE_WIDTH
+RIGHT_PADDLE_Y =  HEIGHT/2.0 - PADDLE_HEIGHT/2.0
 PADDLE_SPEED = 7
 #############################
 
@@ -41,8 +43,8 @@ rightPaddle = pygame.Rect( RIGHT_PADDLE_X, RIGHT_PADDLE_Y, PADDLE_WIDTH, PADDLE_
 BALL_X = WIDTH/2
 BALL_Y = HEIGHT/2
 BALL_RADIUS = 13
-BALL_X_VEL = 10
-BALL_Y_VEL = 10
+BALL_X_VEL = 12
+BALL_Y_VEL = 12
 #############################
 
 #players score
@@ -106,10 +108,29 @@ while run:
     if BALL_Y <= 0 or BALL_Y >= HEIGHT:
         BALL_Y_VEL = -BALL_Y_VEL
 
-    #ball- paddle collision detection
-    if leftPaddle.collidepoint( BALL_X, BALL_Y ) or rightPaddle.collidepoint( BALL_X, BALL_Y ):
-        BALL_X_VEL = -BALL_X_VEL
-        #BALL_Y_VEL = -BALL_Y_VEL
+    #ball - paddle collision detection
+    if leftPaddle.collidepoint( BALL_X, BALL_Y ):
+        v = 12
+
+        # theta is the angle the ball hits the paddle
+        theta = math.atan( BALL_X / BALL_Y  )
+
+        # thetaReflection is the ange the ball will bouce off the paddle
+        thetaReflection = theta + math.pi/4 * ( ( BALL_Y - leftPaddle.centery ) / ( PADDLE_HEIGHT / 2.0 ) )
+
+        # simple trig calcoulates the bouncing trajectory
+        BALL_X_VEL = math.cos( thetaReflection ) * v
+        BALL_Y_VEL = math.sin( thetaReflection ) * v
+
+    elif rightPaddle.collidepoint( BALL_X + BALL_RADIUS, BALL_Y + BALL_RADIUS):
+        v = 12
+
+        theta = math.atan( BALL_Y / BALL_X )
+
+        thetaReflection = theta + math.pi/4 * ( ( BALL_Y - rightPaddle.centery ) / ( PADDLE_HEIGHT / 2.0 ) )
+
+        BALL_X_VEL = -math.cos( thetaReflection ) * v
+        BALL_Y_VEL = -math.sin( thetaReflection ) * v
 
     #render half-field line
     pygame.draw.line( SURFACE, WHITE, ( WIDTH / 2, 0 ), ( WIDTH / 2, HEIGHT  ) )
@@ -124,7 +145,7 @@ while run:
     if scored:
         pygame.time.wait(2000)
         scored = False
-    pygame.draw.circle( SURFACE, WHITE, ( BALL_X, BALL_Y ), BALL_RADIUS )
+    pygame.draw.circle( SURFACE, WHITE, ( int(BALL_X), int(BALL_Y) ), BALL_RADIUS )
 
     #display players score
     rightScoreDisplay = font.render( "{0}".format(leftScore), 1, WHITE )
