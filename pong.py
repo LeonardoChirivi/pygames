@@ -94,18 +94,18 @@ while run:
 
     #handling ball motion
     if BALL_X <= 0:
-        #BALL_X_VEL = -BALL_X_VEL
         BALL_X = WIDTH/2
         BALL_Y = HEIGHT/2
         rightScore += 1
         scored = True
-    elif BALL_X >= WIDTH:
-        #BALL_X_VEL = -BALL_X_VEL
+
+    elif BALL_X >= WIDTH - BALL_RADIUS:
         BALL_X = WIDTH/2
         BALL_Y = HEIGHT/2
         leftScore += 1
         scored = True
-    if BALL_Y <= 0 or BALL_Y >= HEIGHT:
+
+    if BALL_Y <= 0 or BALL_Y >= HEIGHT - BALL_RADIUS:
         BALL_Y_VEL = -BALL_Y_VEL
 
     #ball - paddle collision detection
@@ -113,24 +113,23 @@ while run:
         v = 15
 
         # theta is the angle the ball hits the paddle
-        theta = math.atan2( BALL_X + BALL_RADIUS , BALL_Y + BALL_RADIUS )
+        theta = -math.atan2( BALL_Y, BALL_X)
 
         # thetaReflection is the ange the ball will bouce off the paddle
         thetaReflection = theta + math.pi/4 * ( ( BALL_Y - leftPaddle.centery ) / ( PADDLE_HEIGHT / 2.0 ) )
 
         # simple trig calcoulates the bouncing trajectory
-        BALL_X_VEL = -abs(math.cos( thetaReflection )) * v
-        BALL_Y_VEL = -abs(math.sin( thetaReflection )) * v
+        #BALL_X_VEL = math.cos( thetaReflection ) * v
+        BALL_Y_VEL = -math.sin( thetaReflection ) * v
+        BALL_X_VEL = -BALL_X_VEL
 
     if (  leftPaddle.left < (BALL_X + BALL_RADIUS) and leftPaddle.right > (BALL_X - BALL_RADIUS) ) and ( leftPaddle.top < (BALL_Y + BALL_RADIUS) and leftPaddle.bottom > (BALL_Y - BALL_RADIUS) ):
         v = 15
-
-        theta = math.atan2( BALL_X, BALL_Y )
-
+        theta = -math.atan2( BALL_Y, BALL_X )
         thetaReflection = theta + math.pi/4 * ( ( BALL_Y - rightPaddle.centery ) / ( PADDLE_HEIGHT / 2.0 ) )
-
-        BALL_X_VEL = abs(math.cos( thetaReflection ) * v)
-        BALL_Y_VEL = abs(math.sin( thetaReflection ) * v)
+        #BALL_X_VEL = math.cos( thetaReflection ) * v
+        BALL_Y_VEL = -math.sin( thetaReflection ) * v
+        BALL_X_VEL = -BALL_X_VEL
 
     #render half-field line
     pygame.draw.line( SURFACE, WHITE, ( WIDTH / 2, 0 ), ( WIDTH / 2, HEIGHT  ) )
