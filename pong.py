@@ -109,28 +109,28 @@ while run:
         BALL_Y_VEL = -BALL_Y_VEL
 
     #ball - paddle collision detection
-    if leftPaddle.collidepoint( BALL_X, BALL_Y ):
-        v = 12
+    if (  rightPaddle.left < (BALL_X + BALL_RADIUS) and rightPaddle.right > (BALL_X - BALL_RADIUS) ) and ( rightPaddle.top < (BALL_Y + BALL_RADIUS) and rightPaddle.bottom > (BALL_Y - BALL_RADIUS) ):
+        v = 15
 
         # theta is the angle the ball hits the paddle
-        theta = math.atan( BALL_X / BALL_Y  )
+        theta = math.atan2( BALL_X + BALL_RADIUS , BALL_Y + BALL_RADIUS )
 
         # thetaReflection is the ange the ball will bouce off the paddle
         thetaReflection = theta + math.pi/4 * ( ( BALL_Y - leftPaddle.centery ) / ( PADDLE_HEIGHT / 2.0 ) )
 
         # simple trig calcoulates the bouncing trajectory
-        BALL_X_VEL = math.cos( thetaReflection ) * v
-        BALL_Y_VEL = math.sin( thetaReflection ) * v
+        BALL_X_VEL = -abs(math.cos( thetaReflection )) * v
+        BALL_Y_VEL = -abs(math.sin( thetaReflection )) * v
 
-    elif rightPaddle.collidepoint( BALL_X + BALL_RADIUS, BALL_Y + BALL_RADIUS):
-        v = 12
+    if (  leftPaddle.left < (BALL_X + BALL_RADIUS) and leftPaddle.right > (BALL_X - BALL_RADIUS) ) and ( leftPaddle.top < (BALL_Y + BALL_RADIUS) and leftPaddle.bottom > (BALL_Y - BALL_RADIUS) ):
+        v = 15
 
-        theta = math.atan( BALL_Y / BALL_X )
+        theta = math.atan2( BALL_X, BALL_Y )
 
         thetaReflection = theta + math.pi/4 * ( ( BALL_Y - rightPaddle.centery ) / ( PADDLE_HEIGHT / 2.0 ) )
 
-        BALL_X_VEL = -math.cos( thetaReflection ) * v
-        BALL_Y_VEL = -math.sin( thetaReflection ) * v
+        BALL_X_VEL = abs(math.cos( thetaReflection ) * v)
+        BALL_Y_VEL = abs(math.sin( thetaReflection ) * v)
 
     #render half-field line
     pygame.draw.line( SURFACE, WHITE, ( WIDTH / 2, 0 ), ( WIDTH / 2, HEIGHT  ) )
