@@ -89,7 +89,7 @@ while run:
         leftScore += 1
         scored = True
 
-    if ball.y <= 0 or ball.y >= HEIGHT - ball.radius:
+    if ball.y <= ball.radius or ball.y >= HEIGHT - ball.radius:
         ball.set_yspeed( -ball.yspeed )
 
     #ball - paddle collision detection

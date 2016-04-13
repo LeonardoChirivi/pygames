@@ -33,17 +33,16 @@ class Ball:
     def bounce( self, pad_top, pad_bottom, pad_height ):
         v = 10
         # theta is the angle the ball hits the paddle
-        theta = ( math.pi/2 ) - ( math.atan2( self.x, self.y ) )
+        theta = math.atan2( self.x, self.y )
 
         #thetaReflection is the angle the ball will bounce off the paddle
-        thetaReflection = theta + ( math.pi/4 ) * ( ( ( self.y - pad_top ) / pad_bottom ) / ( pad_height / 2.0 ) )
+        thetaReflection = theta + ( math.pi/4 ) * (  ( self.y - ( pad_bottom + pad_top )/2.0 )   / ( pad_height / 2.0 ) )
 
         # simple trig calcoulates the bouncing trajectory
-        if self.set_yspeed < 0:
-            self.set_yspeed( -abs( math.sin( thetaReflection ) ) * v )
+        if self.yspeed < 0:
+            self.set_yspeed( math.sin( thetaReflection )  * -v )
         else:
-            self.set_yspeed( abs( math.sin( thetaReflection ) ) * v )
-
+            self.set_yspeed( math.sin( thetaReflection )  * v )
         self.set_xspeed( -self.xspeed )
 
     def render( self, screen ):
