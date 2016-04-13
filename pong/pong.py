@@ -9,6 +9,7 @@
 
 import pygame, os, sys, math
 from pygame.locals import *
+from paddle import Paddle
 
 #setting window position
 os.environ['SDL_VIDEO_CENTERED'] = "1"
@@ -25,19 +26,9 @@ pygame.display.set_caption('PONG')
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-#####paddles specs###########
-PADDLE_WIDTH = 13
-PADDLE_HEIGHT = HEIGHT/5
-LEFT_PADDLE_X = 15
-LEFT_PADDLE_Y =  HEIGHT/2.0 - PADDLE_HEIGHT/2.0
-RIGHT_PADDLE_X =  WIDTH - 15 - PADDLE_WIDTH
-RIGHT_PADDLE_Y =  HEIGHT/2.0 - PADDLE_HEIGHT/2.0
-PADDLE_SPEED = 7
-#############################
-
-#creating the two paddle object
-leftPaddle = pygame.Rect( LEFT_PADDLE_X, LEFT_PADDLE_Y, PADDLE_WIDTH, PADDLE_HEIGHT )
-rightPaddle = pygame.Rect( RIGHT_PADDLE_X, RIGHT_PADDLE_Y, PADDLE_WIDTH, PADDLE_HEIGHT )
+# Paddle objects
+leftPaddle = Paddle( 13, HEIGHT/5, 15, (2*HEIGHT)/5.0 )
+rightPaddle = Paddle( 13, HEIGHT/5, WIDTH-15-13, (2*HEIGHT)/5.0 )
 
 #####ball specs##############
 BALL_X = WIDTH/2
@@ -74,23 +65,23 @@ while run:
 
     #move right paddle up
     if keys[K_w]:
-        if leftPaddle.top > 0:
-            leftPaddle.top -= PADDLE_SPEED
+        if leftPaddle.ypos > 0:
+            leftPaddle.move_up()
 
     #move left paddle down
     if keys[K_s]:
-        if leftPaddle.bottom < HEIGHT:
-            leftPaddle.bottom += PADDLE_SPEED
+        if (leftPaddle.ypos + leftPaddle.height) < HEIGHT:
+            leftPaddle.move_down()
 
     #move right paddle up
     if keys[K_UP]:
-        if rightPaddle.top > 0:
-            rightPaddle.top -= PADDLE_SPEED
+        if rightPaddle.ypos > 0:
+            rightPaddle.move_up()
 
     #move right paddle down
     if keys[K_DOWN]:
-        if rightPaddle.bottom < HEIGHT:
-            rightPaddle.bottom += PADDLE_SPEED
+        if (rightPaddle.ypos + leftPaddle.height) < HEIGHT:
+            rightPaddle.move_down()
 
     #handling ball motion
     if BALL_X <= 0:
@@ -109,17 +100,15 @@ while run:
         BALL_Y_VEL = -BALL_Y_VEL
 
     #ball - paddle collision detection
-    if (  rightPaddle.left < (BALL_X + BALL_RADIUS) and rightPaddle.right > (BALL_X - BALL_RADIUS) ) and ( rightPaddle.top < (BALL_Y + BALL_RADIUS) and rightPaddle.bottom > (BALL_Y - BALL_RADIUS) ):
+    if (  rightPaddle.left() < (BALL_X + BALL_RADIUS) and rightPaddle.right() > (BALL_X - BALL_RADIUS) ) and ( rightPaddle.top() < (BALL_Y + BALL_RADIUS) and rightPaddle.bottom() > (BALL_Y - BALL_RADIUS) ):
         v = 10
 
         # theta is the angle the ball hits the paddle
         theta = math.pi/2 - (math.atan2( BALL_X, BALL_Y))
 
-        # thetaReflection is the ange the ball will bouce off the paddle
-        thetaReflection = theta + math.pi/4 * ( ( BALL_Y - leftPaddle.centery ) / ( PADDLE_HEIGHT / 2.0 ) )
+        thetaReflection = theta + math.pi/4 * ( ( BALL_Y - leftPaddle.top()/leftPaddle.bottom() ) / ( leftPaddle.height / 2.0 ) )
 
         # simple trig calcoulates the bouncing trajectory
-        #BALL_X_VEL = math.cos( thetaReflection ) * v
         if BALL_Y_VEL < 0:
             BALL_Y_VEL = -abs(math.sin( thetaReflection )) * v
         else:
@@ -127,12 +116,11 @@ while run:
 
         BALL_X_VEL = -BALL_X_VEL
 
-    if (  leftPaddle.left < (BALL_X + BALL_RADIUS) and leftPaddle.right > (BALL_X - BALL_RADIUS) ) and ( leftPaddle.top < (BALL_Y + BALL_RADIUS) and leftPaddle.bottom > (BALL_Y - BALL_RADIUS) ):
+    if (  leftPaddle.left() < (BALL_X + BALL_RADIUS) and leftPaddle.right() > (BALL_X - BALL_RADIUS) ) and ( leftPaddle.top() < (BALL_Y + BALL_RADIUS) and leftPaddle.bottom() > (BALL_Y - BALL_RADIUS) ):
         v = 10
         theta = math.pi/2 - (math.atan2( BALL_X, BALL_Y ))
-        thetaReflection = theta + math.pi/4 * ( ( BALL_Y - rightPaddle.centery ) / ( PADDLE_HEIGHT / 2.0 ) )
-        #BALL_X_VEL = math.cos( thetaReflection ) * v
-        #BALL_Y_VEL = -math.sin( thetaReflection ) * v
+        thetaReflection = theta + math.pi/4 * ( ( BALL_Y - rightPaddle.top()/rightPaddle.bottom() ) / ( rightPaddle.height / 2.0 ) )
+
         if BALL_Y_VEL < 0:
             BALL_Y_VEL = -abs(math.sin( thetaReflection )) * v
         else:
@@ -141,11 +129,11 @@ while run:
         BALL_X_VEL = -BALL_X_VEL
 
     #render half-field line
-    pygame.draw.line( SURFACE, WHITE, ( WIDTH / 2, 0 ), ( WIDTH / 2, HEIGHT  ) )
+    pygame.draw.line( SURFACE, WHITE, ( WIDTH/2, 0 ), ( WIDTH/2, HEIGHT  ) )
 
     #render the paddles
-    pygame.draw.rect( SURFACE, WHITE, leftPaddle )
-    pygame.draw.rect( SURFACE, WHITE, rightPaddle )
+    leftPaddle.render(SURFACE)
+    rightPaddle.render(SURFACE)
 
     #render the ball
     BALL_X += BALL_X_VEL
