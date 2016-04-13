@@ -10,6 +10,7 @@
 import pygame, os, sys, math
 from pygame.locals import *
 from paddle import Paddle
+from ball import Ball
 
 #setting window position
 os.environ['SDL_VIDEO_CENTERED'] = "1"
@@ -26,21 +27,13 @@ pygame.display.set_caption('PONG')
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-# Paddle objects
+# Paddle objects and ball object
 leftPaddle = Paddle( 13, HEIGHT/5, 15, (2*HEIGHT)/5.0 )
 rightPaddle = Paddle( 13, HEIGHT/5, WIDTH-15-13, (2*HEIGHT)/5.0 )
-
-#####ball specs##############
-BALL_X = WIDTH/2
-BALL_Y = HEIGHT/2
-BALL_RADIUS = 13
-BALL_X_VEL = 12
-BALL_Y_VEL = 12
-#############################
+ball = Ball( WIDTH/2, HEIGHT/2, 13 )
 
 #players score
-rightScore = 0
-leftScore = 0
+rightScore = leftScore = 0
 scored = False
 
 #score font
@@ -51,6 +44,8 @@ clock = pygame.time.Clock()
 run = True
 
 pygame.mouse.set_visible(False)
+
+###########game loop#############
 
 while run:
 
@@ -84,49 +79,25 @@ while run:
             rightPaddle.move_down()
 
     #handling ball motion
-    if BALL_X <= 0:
-        BALL_X = WIDTH/2
-        BALL_Y = HEIGHT/2
+    if ball.x <= 0:
+        ball.x, ball.y =  WIDTH/2, HEIGHT/2
         rightScore += 1
         scored = True
 
-    elif BALL_X >= WIDTH - BALL_RADIUS:
-        BALL_X = WIDTH/2
-        BALL_Y = HEIGHT/2
+    elif ball.x >= WIDTH - ball.radius:
+        ball.x, ball.y =  WIDTH/2, HEIGHT/2
         leftScore += 1
         scored = True
 
-    if BALL_Y <= 0 or BALL_Y >= HEIGHT - BALL_RADIUS:
-        BALL_Y_VEL = -BALL_Y_VEL
+    if ball.y <= 0 or ball.y >= HEIGHT - ball.radius:
+        ball.set_yspeed( -ball.yspeed )
 
     #ball - paddle collision detection
-    if (  rightPaddle.left() < (BALL_X + BALL_RADIUS) and rightPaddle.right() > (BALL_X - BALL_RADIUS) ) and ( rightPaddle.top() < (BALL_Y + BALL_RADIUS) and rightPaddle.bottom() > (BALL_Y - BALL_RADIUS) ):
-        v = 10
+    if (  rightPaddle.left() < (ball.x + ball.radius) and rightPaddle.right() > (ball.x - ball.radius) ) and ( rightPaddle.top() < (ball.y + ball.radius) and rightPaddle.bottom() > (ball.y - ball.radius) ):
+        ball.bounce( rightPaddle.top(), rightPaddle.bottom(), rightPaddle.height )
 
-        # theta is the angle the ball hits the paddle
-        theta = math.pi/2 - (math.atan2( BALL_X, BALL_Y))
-
-        thetaReflection = theta + math.pi/4 * ( ( BALL_Y - leftPaddle.top()/leftPaddle.bottom() ) / ( leftPaddle.height / 2.0 ) )
-
-        # simple trig calcoulates the bouncing trajectory
-        if BALL_Y_VEL < 0:
-            BALL_Y_VEL = -abs(math.sin( thetaReflection )) * v
-        else:
-            BALL_Y_VEL = abs(math.sin( thetaReflection )) * v
-
-        BALL_X_VEL = -BALL_X_VEL
-
-    if (  leftPaddle.left() < (BALL_X + BALL_RADIUS) and leftPaddle.right() > (BALL_X - BALL_RADIUS) ) and ( leftPaddle.top() < (BALL_Y + BALL_RADIUS) and leftPaddle.bottom() > (BALL_Y - BALL_RADIUS) ):
-        v = 10
-        theta = math.pi/2 - (math.atan2( BALL_X, BALL_Y ))
-        thetaReflection = theta + math.pi/4 * ( ( BALL_Y - rightPaddle.top()/rightPaddle.bottom() ) / ( rightPaddle.height / 2.0 ) )
-
-        if BALL_Y_VEL < 0:
-            BALL_Y_VEL = -abs(math.sin( thetaReflection )) * v
-        else:
-            BALL_Y_VEL = abs(math.sin( thetaReflection )) * v
-
-        BALL_X_VEL = -BALL_X_VEL
+    if (  leftPaddle.left() < (ball.x + ball.radius) and leftPaddle.right() > (ball.x - ball.radius) ) and ( leftPaddle.top() < (ball.y + ball.radius) and leftPaddle.bottom() > (ball.y - ball.radius) ):
+        ball.bounce( leftPaddle.top(), leftPaddle.bottom(), leftPaddle.height )
 
     #render half-field line
     pygame.draw.line( SURFACE, WHITE, ( WIDTH/2, 0 ), ( WIDTH/2, HEIGHT  ) )
@@ -136,12 +107,11 @@ while run:
     rightPaddle.render(SURFACE)
 
     #render the ball
-    BALL_X += BALL_X_VEL
-    BALL_Y += BALL_Y_VEL
+    ball.update( ball.xspeed, ball.yspeed )
     if scored:
         pygame.time.wait(2000)
         scored = False
-    pygame.draw.circle( SURFACE, WHITE, ( int(BALL_X), int(BALL_Y) ), BALL_RADIUS )
+    ball.render(SURFACE)
 
     #display players score
     rightScoreDisplay = font.render( "{0}".format(leftScore), 1, WHITE )

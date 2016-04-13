@@ -9,7 +9,7 @@
 
 import pygame
 
-class Paddle():
+class Paddle:
 
     speed = 7
     COLOR = (255, 255, 255)
