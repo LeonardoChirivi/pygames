@@ -7,7 +7,7 @@
 # author: Leonardo Chirivì
 # (c) 2016
 
-import pygame, os, sys, math
+import pygame, os, sys
 from pygame.locals import *
 from paddle import Paddle
 from ball import Ball
