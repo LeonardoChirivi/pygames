@@ -60,22 +60,22 @@ while run:
 
     #move right paddle up
     if keys[K_w]:
-        if leftPaddle.ypos > 0:
+        if leftPaddle.top() > 0:
             leftPaddle.move_up()
 
     #move left paddle down
     if keys[K_s]:
-        if (leftPaddle.ypos + leftPaddle.height) < HEIGHT:
+        if leftPaddle.bottom() < HEIGHT:
             leftPaddle.move_down()
 
     #move right paddle up
     if keys[K_UP]:
-        if rightPaddle.ypos > 0:
+        if rightPaddle.top() > 0:
             rightPaddle.move_up()
 
     #move right paddle down
     if keys[K_DOWN]:
-        if (rightPaddle.ypos + leftPaddle.height) < HEIGHT:
+        if rightPaddle.bottom() < HEIGHT:
             rightPaddle.move_down()
 
     #handling ball motion

@@ -36,7 +36,7 @@ class Ball:
         theta = math.atan2( self.x, self.y )
 
         #thetaReflection is the angle the ball will bounce off the paddle
-        thetaReflection = theta + ( math.pi/4 ) * (  ( self.y - ( pad_bottom + pad_top )/2.0 )   / ( pad_height / 2.0 ) )
+        thetaReflection = theta + ( math.pi/4 ) * (  ( self.y - ( pad_bottom + pad_top )/2.0 ) / ( pad_height/2.0 ) )
 
         # simple trig calcoulates the bouncing trajectory
         if self.yspeed < 0:
