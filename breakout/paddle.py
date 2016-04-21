@@ -11,11 +11,11 @@ class Paddle:
         self.xpos = xpos
         self.ypos = ypos
 
-    def move_up(self):
-        self.ypos -= self.speed
+    def move_left(self):
+        self.xpos -= self.speed
 
-    def move_down(self):
-        self.ypos += self.speed
+    def move_right(self):
+        self.xpos += self.speed
 
     def left(self):
         return self.xpos
