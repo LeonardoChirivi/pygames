@@ -69,9 +69,11 @@ def game():
         if keys[K_RIGHT] and paddle.right() < SCREEN_WIDTH:
             paddle.move_right()
 
-        if ( ball.y + ball.radius ) <= 0: ball.yspeed = -ball.yspeed
-        if ( ball.x + ball.radius ) <= 0: ball.xspeed = -ball.xspeed
+        if ( ball.y - ball.radius ) <= 0: ball.yspeed = -ball.yspeed
+        if ( ball.x - ball.radius ) <= 0: ball.xspeed = -ball.xspeed
         if ( ball.x + ball.radius ) >= SCREEN_WIDTH: ball.xspeed = -ball.xspeed
+        if ( paddle.left() <= (ball.x + ball.radius) and paddle.right() >= (ball.x - ball.radius) ) and ( paddle.top() <= (ball.y + ball.radius) and paddle.bottom() >= (ball.y - ball.radius) ):
+            ball.bounce( paddle )
 
         #render the briks
         render_bricks()
@@ -82,7 +84,7 @@ def game():
         #render the ball
         if not game_start:
             ball.x = paddle.left()+paddle.width/2
-            ball.y = SCREEN_HEIGHT-paddle.height-8
+            ball.y = SCREEN_HEIGHT-paddle.height-10
         else:
             ball.update( ball.xspeed, ball.yspeed )
         ball.render(SURFACE)

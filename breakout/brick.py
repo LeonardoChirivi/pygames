@@ -5,6 +5,7 @@ class Brick:
     color = ( 0, 255, 255 )
     xpos = 0
     ypos = 0
+    hit = False
 
     def __init__( self, width, height ):
         self.width = width
