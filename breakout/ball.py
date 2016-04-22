@@ -2,11 +2,11 @@ import pygame
 
 class Ball:
 
-    xspeed = 10
-    yspeed = 10
+    xspeed = 1
+    yspeed = -10
     color = ( 255, 255, 255 )
 
-    def __init__( x, y, radius ):
+    def __init__( self, x, y, radius ):
         self.x = x
         self.y = y
         self.radius = radius
@@ -16,4 +16,4 @@ class Ball:
         self.y += yspeed
 
     def render( self, screen ):
-        pygame.draw.cirlce( screen, self.color, ( int(self.x), int(self.y) ), self.radius )
+        pygame.draw.circle( screen, self.color, ( int(self.x), int(self.y) ), self.radius )
