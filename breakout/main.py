@@ -23,15 +23,20 @@ pygame.display.set_caption('Breakout')
 #                   width        height                  xpos                            ypos
 paddle = Paddle( SCREEN_WIDTH/6,   10,     (SCREEN_WIDTH/2)-(SCREEN_WIDTH/6)/2,    SCREEN_HEIGHT - 12 )
 
-#ball:
+#ball
 #                  ballx                                bally                    radius
-ball = Ball( paddle.left()+paddle.width/2,    SCREEN_HEIGHT-paddle.height-8,      8   )
+ball = Ball( paddle.left()+paddle.width/2,    SCREEN_HEIGHT-paddle.height-10,      8   )
 
 #bicks array:
 bricks = []
-for i in range( 120 ):
-    brick = Brick( 13, 5 )
-    bricks.append( brick )
+x = y = 50
+for i in range( 12 ):
+    for j in range( 20 ):
+        bricks.append( Brick( 25, 10, x, y ) )
+        x += 30
+
+    y += 12
+    x = 50
 
 FPS = 60
 clock = pygame.time.Clock()
@@ -69,14 +74,31 @@ def game():
         if keys[K_RIGHT] and paddle.right() < SCREEN_WIDTH:
             paddle.move_right()
 
+        #brick bouncing
+        for b in bricks:
+            if not b.hit:
+                if ( b.left() <= (ball.x + ball.radius) and b.right() >= (ball.x - ball.radius) ) and ( b.top() <= (ball.y + ball.radius) and b.bottom() >= (ball.y - ball.radius) ):
+                    b.hit = True
+                    if ball.xspeed > 0 and ball.yspeed > 0: ball.yspeed = -ball.yspeed
+                    elif ball.xspeed < 0 and ball.yspeed < 0: ball.yspeed = -ball.yspeed
+                    elif ball.xspeed < 0 and ball.yspeed > 0: ball.xspeed = -ball.xspeed
+                    elif ball.xspeed > 0 and ball.yspeed < 0: ball.xspeed = -ball.xspeed
+
+
+        #ball bouncing logic
         if ( ball.y - ball.radius ) <= 0: ball.yspeed = -ball.yspeed
         if ( ball.x - ball.radius ) <= 0: ball.xspeed = -ball.xspeed
         if ( ball.x + ball.radius ) >= SCREEN_WIDTH: ball.xspeed = -ball.xspeed
+
+        #paddle bouncing
         if ( paddle.left() <= (ball.x + ball.radius) and paddle.right() >= (ball.x - ball.radius) ) and ( paddle.top() <= (ball.y + ball.radius) and paddle.bottom() >= (ball.y - ball.radius) ):
             ball.bounce( paddle )
 
         #render the briks
-        render_bricks()
+        #render_bricks()
+        for block in bricks:
+            if not block.hit:
+                block.render(SURFACE)
 
         #render the paddle
         paddle.render(SURFACE)
@@ -100,19 +122,20 @@ def ball_motion():
 ###############################################
 
 def render_bricks():
-    x = 100
-    y = 100
+    x = 50
+    y = 50
 
-    for i in range( 6 ):
-
+    for i in range( 12 ):
         for j in range( 20 ):
-            bricks[ i*10 + j ].xpos = x
-            bricks[ i*10 + j ].ypos = y
-            bricks[ i*10 + j ].render( SURFACE )
-            x += 23
 
-        y += 15
-        x = 100
+            if not bricks[ i*10 + j ].hit:
+                bricks[ i*10 + j ].xpos = x
+                bricks[ i*10 + j ].ypos = y
+                bricks[ i*10 + j ].render( SURFACE )
+            x += 30
+
+        y += 12
+        x = 50
 
 ##############################################
 
