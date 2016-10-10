@@ -21,11 +21,11 @@ pygame.display.set_caption('Breakout')
 #initialize players
 #paddle:
 #                   width        height                  xpos                            ypos
-paddle = Paddle( SCREEN_WIDTH/6,   10,     (SCREEN_WIDTH/2)-(SCREEN_WIDTH/6)/2,    SCREEN_HEIGHT - 12 )
+paddle = Paddle( SCREEN_WIDTH/8,   10,     (SCREEN_WIDTH/2)-(SCREEN_WIDTH/8)/2,    SCREEN_HEIGHT - 12 )
 
 #ball
 #                  ballx                                bally                    radius
-ball = Ball( paddle.left()+paddle.width/2,    SCREEN_HEIGHT-paddle.height-10,      8   )
+ball = Ball( paddle.left()+paddle.width/2,    SCREEN_HEIGHT-paddle.height-20,      7   )
 
 #bicks array:
 bricks = []
@@ -77,13 +77,12 @@ def game():
         #brick bouncing
         for b in bricks:
             if not b.hit:
-                if ( b.left() <= (ball.x + ball.radius) and b.right() >= (ball.x - ball.radius) ) and ( b.top() <= (ball.y + ball.radius) and b.bottom() >= (ball.y - ball.radius) ):
-                    b.hit = True
+                if b.left() < (ball.x + ball.radius) and b.right() > (ball.x - ball.radius) and b.top() < (ball.y + ball.radius) and b.bottom() > (ball.y - ball.radius):
                     if ball.xspeed > 0 and ball.yspeed > 0: ball.yspeed = -ball.yspeed
                     elif ball.xspeed < 0 and ball.yspeed < 0: ball.yspeed = -ball.yspeed
                     elif ball.xspeed < 0 and ball.yspeed > 0: ball.xspeed = -ball.xspeed
                     elif ball.xspeed > 0 and ball.yspeed < 0: ball.xspeed = -ball.xspeed
-
+                    b.hit = True
 
         #ball bouncing logic
         if ( ball.y - ball.radius ) <= 0: ball.yspeed = -ball.yspeed
@@ -91,8 +90,12 @@ def game():
         if ( ball.x + ball.radius ) >= SCREEN_WIDTH: ball.xspeed = -ball.xspeed
 
         #paddle bouncing
-        if ( paddle.left() <= (ball.x + ball.radius) and paddle.right() >= (ball.x - ball.radius) ) and ( paddle.top() <= (ball.y + ball.radius) and paddle.bottom() >= (ball.y - ball.radius) ):
+        #if paddle.left() < (ball.x + ball.radius) and paddle.right() > (ball.x - ball.radius) and paddle.top() < (ball.y + ball.radius) and paddle.bottom() > (ball.y - ball.radius):
+        if ( paddle.left() <= ( ball.x - ball.radius ) <= paddle.right() and paddle.top() <= ( ball.y + ball.radius + 1 ) ) or ( paddle.left() <= ( ball.x + ball.radius ) <= paddle.right() and paddle.top() <= ( ball.y + ball.radius + 1 ) ):
             ball.bounce( paddle )
+            print 'bounce'
+            print 'ball: x',ball.x,'y',ball.y
+            print 'pad: l', paddle.left(), 'r',paddle.right(), 't',paddle.top(), 'b',paddle.bottom()
 
         #render the briks
         #render_bricks()
@@ -114,6 +117,8 @@ def game():
         clock.tick(FPS)
         pygame.display.update()
 
+        #print 'ball: x',ball.x,' y',ball.y
+        #print 'l', paddle.left(), 'r',paddle.right(), 't',paddle.top(), 'b',paddle.bottom()
 ###############################################
 
 def ball_motion():

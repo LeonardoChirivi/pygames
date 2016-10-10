@@ -33,7 +33,7 @@ class Ball:
     def bounce( self, pad_top, pad_bottom, pad_height ):
         v = 10
         # theta is the angle the ball hits the paddle
-        theta = math.atan2( self.x, self.y )
+        theta = math.atan2( float(self.x), float(self.y) )
 
         #thetaReflection is the angle the ball will bounce off the paddle
         thetaReflection = theta + ( math.pi/4 ) * (  ( self.y - ( pad_bottom + pad_top )/2.0 ) / ( pad_height/2.0 ) )
